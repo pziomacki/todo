@@ -8,4 +8,6 @@ import dagger.Component;
 public interface ApplicationComponent {
     void inject(TodoApplication application);
 
+    TodoComponent todoComponent(TodoModule todoModule);
+
 }

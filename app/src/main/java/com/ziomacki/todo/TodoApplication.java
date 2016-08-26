@@ -2,6 +2,7 @@ package com.ziomacki.todo;
 
 import android.app.Application;
 import com.ziomacki.todo.inject.ApplicationComponent;
+import com.ziomacki.todo.inject.ApplicationModule;
 import com.ziomacki.todo.inject.DaggerApplicationComponent;
 
 public class TodoApplication extends Application {
@@ -15,8 +16,8 @@ public class TodoApplication extends Application {
     }
 
     private void initApplicationComponent() {
-        applicationComponent = DaggerApplicationComponent.builder().build();
-        applicationComponent.inject(this);
+        applicationComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(this))
+                .build();
     }
 
     public ApplicationComponent getApplicationComponent() {

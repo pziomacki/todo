@@ -1,9 +1,10 @@
 package com.ziomacki.todo.task.model;
 
 import com.google.gson.annotations.Expose;
+import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Task {
+public class Task extends RealmObject{
 
     public static final String KEY_ID = "id";
     public static final String KEY_MODIFIED = "modified";
