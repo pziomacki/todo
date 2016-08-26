@@ -10,7 +10,7 @@ import com.ziomacki.todo.task.presenter.ListPresenter;
 import javax.inject.Inject;
 import butterknife.ButterKnife;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements ListView{
 
     @Inject
     ListPresenter listPresenter;
@@ -21,11 +21,18 @@ public class ListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list);
         ButterKnife.bind(this);
         injectDependencies();
+        listPresenter.attachView(this);
     }
 
     private void injectDependencies() {
         ApplicationComponent applicationComponent =
                 ((TodoApplication) getApplication()).getApplicationComponent();
         applicationComponent.todoComponent(new TodoModule()).inject(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        listPresenter.onStop();
     }
 }

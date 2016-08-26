@@ -5,9 +5,11 @@ import javax.inject.Inject;
 
 public class TodoRepository {
 
-    @Inject
-    RealmWrapper realmWrapper;
+    private RealmWrapper realmWrapper;
 
     @Inject
-    TodoRepository() {}
+    TodoRepository(RealmWrapper realmWrapper) {
+        this.realmWrapper = realmWrapper;
+    }
+
 }

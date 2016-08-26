@@ -8,5 +8,8 @@ public class TaskContainer extends RealmObject{
     public RealmList<Task> taskRealmList;
     public int totalCount;
 
+    public boolean isAllFetched() {
+        return taskRealmList.size() == totalCount;
+    }
 
 }

@@ -11,15 +11,16 @@ public class TodoService {
     private static final String TOTAL_COUNT_HEADER_NAME = "X-Total-Count";
     private static final int PAGE_SIZE = 30;
 
-    @Inject
-    TodoApiService taskApiService;
+    private TodoApiService todoApiService;
 
     @Inject
-    TodoService() {}
+    public TodoService(TodoApiService todoApiService) {
+        this.todoApiService = todoApiService;
+    }
 
     public Observable<TaskContainer> fetchTasks(int start) {
         int limit = start + PAGE_SIZE;
-        return taskApiService.getTaskList(start, limit).map(new Func1<Response<List<Task>>, TaskContainer>() {
+        return todoApiService.getTaskList(start, limit).map(new Func1<Response<List<Task>>, TaskContainer>() {
             @Override
             public TaskContainer call(Response<List<Task>> tasksResponse) {
                 TaskContainer taskContainer = readResponse(tasksResponse);

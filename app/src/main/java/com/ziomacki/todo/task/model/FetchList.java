@@ -1,20 +1,26 @@
 package com.ziomacki.todo.task.model;
 
-import java.util.List;
 import javax.inject.Inject;
 import rx.Observable;
+import rx.functions.Action1;
 
 public class FetchList {
 
-    @Inject
-    TodoRepository todoRepository;
-    @Inject
-    TodoService todoService;
+    private TodoRepository todoRepository;
+    private TodoService todoService;
 
     @Inject
-    FetchList() {}
+    FetchList(TodoRepository todoRepository, TodoService todoService) {
+        this.todoRepository = todoRepository;
+        this.todoService = todoService;
+    }
 
-    public Observable<List<Task>> fetchNextPartOfTasks(int currentTaskListSize) {
-        return todoService.fetchTasks(currentTaskListSize);
+    public Observable<TaskContainer> fetchNextPartOfTasks(int currentTaskListSize) {
+        return todoService.fetchTasks(currentTaskListSize).doOnNext(new Action1<TaskContainer>() {
+            @Override
+            public void call(TaskContainer taskContainer) {
+                //TODO: implement
+            }
+        });
     }
 }
