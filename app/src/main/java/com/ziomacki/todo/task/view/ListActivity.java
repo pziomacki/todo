@@ -1,5 +1,6 @@
 package com.ziomacki.todo.task.view;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -95,16 +96,6 @@ public class ListActivity extends AppCompatActivity implements ListView{
     }
 
     @Override
-    public void showLoading() {
-        swipeRefreshLayout.setRefreshing(true);
-    }
-
-    @Override
-    public void hideLoading() {
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
     public void bindTaskList(List<Task> taskList) {
         listAdapter.setResult(taskList);
     }
@@ -122,5 +113,14 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Override
     public void hideLoadingMore() {
         listAdapter.hideLoadingMore();
+    }
+
+    private void displaySnackbar(String message) {
+        Snackbar.make(swipeRefreshLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void displayErrorMessage() {
+        displaySnackbar(getString(R.string.error_message));
     }
 }

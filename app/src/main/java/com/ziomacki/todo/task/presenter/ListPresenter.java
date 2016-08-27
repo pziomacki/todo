@@ -75,19 +75,23 @@ public class ListPresenter {
                 .onErrorReturn(new Func1<Throwable, TaskContainer>() {
                     @Override
                     public TaskContainer call(Throwable throwable) {
-                        throwable.printStackTrace();
-                        setLoading(false);
-                        listView.showLoadingMore();
+                        //TODO: handle specific errors
+                        listView.displayErrorMessage();
+                        finishFetchingData();
                         return null;
                     }
                 }).subscribe(new Action1<TaskContainer>() {
                     @Override
                     public void call(TaskContainer taskContainer) {
-                        setLoading(false);
-                        listView.showLoadingMore();
+                        finishFetchingData();
                     }
                 });
         compositeSubscription.add(subscription);
+    }
+
+    private void finishFetchingData() {
+        setLoading(false);
+        listView.hideLoadingMore();
     }
 
     private void setLoading(boolean isLoading) {
