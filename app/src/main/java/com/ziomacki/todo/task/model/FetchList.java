@@ -19,7 +19,7 @@ public class FetchList {
         return todoService.fetchTasks(currentTaskListSize).doOnNext(new Action1<TaskContainer>() {
             @Override
             public void call(TaskContainer taskContainer) {
-                //TODO: implement
+                todoRepository.updateTaskContainer(taskContainer);
             }
         });
     }
