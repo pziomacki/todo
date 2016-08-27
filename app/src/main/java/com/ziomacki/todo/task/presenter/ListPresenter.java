@@ -22,6 +22,7 @@ public class ListPresenter {
     private TodoRepository todoRepository;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     private RealmResults<Task> tasks;
+    private boolean isLoading = false;
 
     @Inject
     public ListPresenter(FetchList fetchList, TodoRepository todoRepository) {
@@ -38,7 +39,6 @@ public class ListPresenter {
         Subscription subscription = todoRepository.getTasks(false).subscribe(new Action1<RealmResults<Task>>() {
             @Override
             public void call(RealmResults<Task> tasks) {
-                fetchFirstPage();
                 setTasks(tasks);
             }
         });
@@ -47,6 +47,10 @@ public class ListPresenter {
 
     private void setTasks(RealmResults<Task> tasks) {
         this.tasks = tasks;
+        updateListViewTasks();
+        if (tasks.size() == 0) {
+            fetchNextPage();
+        }
     }
 
     private void addTasksListener() {
@@ -62,17 +66,32 @@ public class ListPresenter {
         listView.bindTaskList(tasks);
     }
 
-    private void fetchFirstPage() {
-        Subscription subscription = fetchList.fetchNextPartOfTasks(0).subscribeOn(Schedulers.io()).observeOn
+    private void fetchNextPage() {
+        int listSize = tasks.size();
+        listView.showLoadingMore();
+        setLoading(true);
+        Subscription subscription = fetchList.fetchNextPartOfTasks(listSize).subscribeOn(Schedulers.io()).observeOn
                 (AndroidSchedulers.mainThread())
                 .onErrorReturn(new Func1<Throwable, TaskContainer>() {
                     @Override
                     public TaskContainer call(Throwable throwable) {
                         throwable.printStackTrace();
+                        setLoading(false);
+                        listView.showLoadingMore();
                         return null;
                     }
-                }).subscribe();
+                }).subscribe(new Action1<TaskContainer>() {
+                    @Override
+                    public void call(TaskContainer taskContainer) {
+                        setLoading(false);
+                        listView.showLoadingMore();
+                    }
+                });
         compositeSubscription.add(subscription);
+    }
+
+    private void setLoading(boolean isLoading) {
+        this.isLoading = isLoading;
     }
 
     public void onStart() {
@@ -82,5 +101,11 @@ public class ListPresenter {
     public void onStop() {
         tasks.removeChangeListeners();
         compositeSubscription.clear();
+    }
+
+    public void loadMore() {
+        if (!isLoading) {
+            fetchNextPage();
+        }
     }
 }

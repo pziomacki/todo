@@ -7,4 +7,7 @@ public interface ListView {
     void showLoading();
     void hideLoading();
     void bindTaskList(List<Task> taskList);
+    void showLoadingMore();
+    void hideLoadingMore();
+
 }

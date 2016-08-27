@@ -20,6 +20,9 @@ import java.util.List;
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 public class ListActivity extends AppCompatActivity implements ListView{
 
@@ -34,6 +37,9 @@ public class ListActivity extends AppCompatActivity implements ListView{
     ListPresenter listPresenter;
     @Inject
     ListAdapter listAdapter;
+    @Inject
+    LoadMoreOnScrollListener loadMoreOnScrollListener;
+    private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +66,24 @@ public class ListActivity extends AppCompatActivity implements ListView{
     protected void onStart() {
         super.onStart();
         listPresenter.onStart();
+        listRecyclerView.addOnScrollListener(loadMoreOnScrollListener);
+        Subscription subscription = loadMoreOnScrollListener.getLoadMoreObservable().subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                listPresenter.loadMore();
+            }
+        });
+        compositeSubscription.add(subscription);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         listPresenter.onStop();
+        listRecyclerView.removeOnScrollListener(loadMoreOnScrollListener);
+        compositeSubscription.clear();
     }
+
     private void setupRecyclerView() {
         listRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -95,5 +112,15 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onListItemClick(OnTaskOpenEvent openEvent) {
         //TODO: implement
+    }
+
+    @Override
+    public void showLoadingMore() {
+        listAdapter.showLoadingMore();
+    }
+
+    @Override
+    public void hideLoadingMore() {
+        listAdapter.hideLoadingMore();
     }
 }
