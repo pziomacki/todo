@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ToDo</string>
+
+    <!--Task list -->
+    <string name="item_completed">Task completed: %s</string>
+
 </resources>

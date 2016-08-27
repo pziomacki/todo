@@ -4,7 +4,11 @@ import com.ziomacki.todo.component.RealmWrapper;
 import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action0;
 
 public class TodoRepository {
 
@@ -32,6 +36,28 @@ public class TodoRepository {
         }
         realm.commitTransaction();
         realm.close();
+    }
+
+    public Observable<RealmResults<Task>> getTasks(final boolean onlyModified) {
+        final Realm realm = realmWrapper.getRealmInstance();
+        return Observable.create(new Observable.OnSubscribe<RealmResults<Task>>() {
+            @Override
+            public void call(Subscriber<? super RealmResults<Task>> subscriber) {
+                RealmResults<Task> results;
+                RealmQuery<Task> query = realm.where(Task.class);
+                if (onlyModified) {
+                    results = query.equalTo(Task.KEY_MODIFIED, true).findAll();
+                } else {
+                    results = query.findAll();
+                }
+                subscriber.onNext(results);
+            }
+        }).doOnUnsubscribe(new Action0() {
+            @Override
+            public void call() {
+                realm.close();
+            }
+        });
     }
 
 }

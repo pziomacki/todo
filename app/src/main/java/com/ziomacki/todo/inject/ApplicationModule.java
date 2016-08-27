@@ -1,6 +1,8 @@
 package com.ziomacki.todo.inject;
 
 import android.content.Context;
+import com.ziomacki.todo.TodoBusIndex;
+import org.greenrobot.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
 
@@ -20,6 +22,12 @@ public class ApplicationModule {
     }
 
     private void setupBusIndex() {
-        //TODO: implement
+        EventBus.builder().addIndex(new TodoBusIndex()).installDefaultEventBus();
+    }
+
+    @Provides
+    @ApplicationScope
+    EventBus provideEventBus() {
+        return EventBus.getDefault();
     }
 }

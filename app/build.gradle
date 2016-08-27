@@ -5,7 +5,7 @@ apply plugin: 'realm-android'
 
 apt {
     arguments {
-        eventBusIndex "com.ziomacki.stackoverflowclient.search.eventbus.StackOverflowBusIndex"
+        eventBusIndex "com.ziomacki.todo.TodoBusIndex"
     }
 }
 
