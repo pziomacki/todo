@@ -60,4 +60,22 @@ public class TodoRepository {
         });
     }
 
+    public Observable<Task> getTask(final int taskId) {
+        return Observable.create(new Observable.OnSubscribe<Task>() {
+            @Override
+            public void call(Subscriber<? super Task> subscriber) {
+                Realm realm = realmWrapper.getRealmInstance();
+                Task taskManaged = realm.where(Task.class).equalTo(Task.KEY_ID, taskId).findFirst();
+                Task taskUnmanaged;
+                if (taskManaged != null) {
+                    taskUnmanaged = realm.copyFromRealm(taskManaged);
+                } else {
+                    taskUnmanaged = new Task();
+                }
+                realm.close();
+                subscriber.onNext(taskUnmanaged);
+            }
+        });
+    }
+
 }

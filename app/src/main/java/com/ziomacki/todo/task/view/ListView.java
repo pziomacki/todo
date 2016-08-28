@@ -8,5 +8,5 @@ public interface ListView {
     void showLoadingMore();
     void hideLoadingMore();
     void displayErrorMessage();
-
+    void openDetails(int taskId);
 }

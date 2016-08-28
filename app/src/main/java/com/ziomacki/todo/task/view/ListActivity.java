@@ -15,6 +15,7 @@ import com.ziomacki.todo.inject.TodoModule;
 import com.ziomacki.todo.task.eventbus.OnTaskOpenEvent;
 import com.ziomacki.todo.task.model.Task;
 import com.ziomacki.todo.task.presenter.ListPresenter;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
@@ -40,6 +41,8 @@ public class ListActivity extends AppCompatActivity implements ListView{
     ListAdapter listAdapter;
     @Inject
     LoadMoreOnScrollListener loadMoreOnScrollListener;
+    @Inject
+    EventBus eventBus;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
     @Override
@@ -66,7 +69,10 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Override
     protected void onStart() {
         super.onStart();
-        listPresenter.onStart();
+        registerListeners();
+    }
+
+    private void registerListeners() {
         listRecyclerView.addOnScrollListener(loadMoreOnScrollListener);
         Subscription subscription = loadMoreOnScrollListener.getLoadMoreObservable().subscribe(new Action1<Integer>() {
             @Override
@@ -75,14 +81,25 @@ public class ListActivity extends AppCompatActivity implements ListView{
             }
         });
         compositeSubscription.add(subscription);
+        eventBus.register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        listPresenter.onStop();
+        unregisterListeners();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        listPresenter.onDestroy();
+    }
+
+    private void unregisterListeners() {
         listRecyclerView.removeOnScrollListener(loadMoreOnScrollListener);
         compositeSubscription.clear();
+        eventBus.unregister(this);
     }
 
     private void setupRecyclerView() {
@@ -102,7 +119,12 @@ public class ListActivity extends AppCompatActivity implements ListView{
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onListItemClick(OnTaskOpenEvent openEvent) {
-        //TODO: implement
+        listPresenter.onTaskClick(openEvent);
+    }
+
+    @Override
+    public void openDetails(int taskId) {
+        TaskDetailsActivity.startActivity(this, taskId);
     }
 
     @Override

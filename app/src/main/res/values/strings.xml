@@ -3,5 +3,9 @@
     <string name="error_message">Something went wrong.</string>
     <!--Task list -->
     <string name="item_completed">Task completed: %s</string>
-
+    <string name="list_menu_upload_title">Upload</string>
+    <string name="list_menu_filter_title">Filter modififed</string>
+    
+    <!-- Task details -->
+    <string name="details_complete">Complete</string>
 </resources>

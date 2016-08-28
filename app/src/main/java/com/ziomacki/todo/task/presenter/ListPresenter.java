@@ -1,5 +1,6 @@
 package com.ziomacki.todo.task.presenter;
 
+import com.ziomacki.todo.task.eventbus.OnTaskOpenEvent;
 import com.ziomacki.todo.task.model.FetchList;
 import com.ziomacki.todo.task.model.Task;
 import com.ziomacki.todo.task.model.TaskContainer;
@@ -48,6 +49,7 @@ public class ListPresenter {
     private void setTasks(RealmResults<Task> tasks) {
         this.tasks = tasks;
         updateListViewTasks();
+        addTasksListener();
         if (tasks.size() == 0) {
             fetchNextPage();
         }
@@ -98,11 +100,7 @@ public class ListPresenter {
         this.isLoading = isLoading;
     }
 
-    public void onStart() {
-        addTasksListener();
-    }
-
-    public void onStop() {
+    public void onDestroy() {
         tasks.removeChangeListeners();
         compositeSubscription.clear();
     }
@@ -111,5 +109,9 @@ public class ListPresenter {
         if (!isLoading) {
             fetchNextPage();
         }
+    }
+
+    public void onTaskClick(OnTaskOpenEvent event) {
+        listView.openDetails(event.taskId);
     }
 }
