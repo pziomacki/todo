@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import com.ziomacki.todo.R;
@@ -80,5 +83,29 @@ public class TaskDetailsActivity extends AppCompatActivity implements TaskDetail
     @Override
     public void displayTaskText(String text) {
         detailsTextView.setText(text);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.details_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                taskDetailsPresenter.updateAndSaveTask(detailsTextView.getText().toString(),
+                        completedCheckboxView.isChecked());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void close() {
+        finish();
     }
 }

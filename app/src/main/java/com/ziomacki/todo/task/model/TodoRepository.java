@@ -78,4 +78,17 @@ public class TodoRepository {
         });
     }
 
+    public Observable<Task> saveTask(final Task task) {
+        return Observable.create(new Observable.OnSubscribe<Task>() {
+            @Override
+            public void call(Subscriber<? super Task> subscriber) {
+                Realm realm = realmWrapper.getRealmInstance();
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(task);
+                realm.commitTransaction();
+                realm.close();
+                subscriber.onNext(task);
+            }
+        });
+    }
 }

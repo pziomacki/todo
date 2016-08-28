@@ -12,6 +12,7 @@ public class TaskDetailsPresenter {
 
     private TaskDetailsView taskDetailsView;
     private int taskId;
+    private Task task;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
     TodoRepository todoRepository;
@@ -32,14 +33,32 @@ public class TaskDetailsPresenter {
         Subscription subscription = todoRepository.getTask(taskId).subscribe(new Action1<Task>() {
             @Override
             public void call(Task task) {
-                taskDetailsView.displayTaskText(task.title);
-                taskDetailsView.setIsCompleted(task.completed);
+                onTaskLoaded(task);
             }
         });
         compositeSubscription.add(subscription);
     }
 
+    private void onTaskLoaded(Task task) {
+        this.task = task;
+        taskDetailsView.displayTaskText(task.title);
+        taskDetailsView.setIsCompleted(task.completed);
+    }
+
     public void onDestroy() {
         compositeSubscription.clear();
+    }
+
+    public void updateAndSaveTask(String taskText, boolean isComplete) {
+        task.completed = isComplete;
+        task.title = taskText;
+        task.modified = true;
+        Subscription subscription = todoRepository.saveTask(task).subscribe(new Action1<Task>() {
+            @Override
+            public void call(Task task) {
+                taskDetailsView.close();
+            }
+        });
+        compositeSubscription.add(subscription);
     }
 }

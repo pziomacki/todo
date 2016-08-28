@@ -8,4 +8,5 @@
     
     <!-- Task details -->
     <string name="details_complete">Complete</string>
+    <string name="details_save">Save Task</string>
 </resources>
