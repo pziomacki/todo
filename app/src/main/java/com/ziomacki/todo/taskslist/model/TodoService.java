@@ -32,7 +32,7 @@ public class TodoService {
 
     private TaskContainer readResponse(Response<List<Task>> tasksResponse) {
         TaskContainer taskContainer = new TaskContainer();
-        taskContainer.taskRealmList = new RealmList<Task>();
+        taskContainer.taskRealmList = new RealmList<>();
         taskContainer.taskRealmList.addAll(tasksResponse.body());
         int totalCount = Integer.parseInt(tasksResponse.headers().get(TOTAL_COUNT_HEADER_NAME));
         taskContainer.totalCount = totalCount;

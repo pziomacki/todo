@@ -1,7 +1,6 @@
 package com.ziomacki.todo.component;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import javax.inject.Inject;
 
 public class ResourceProvider {
@@ -17,7 +16,4 @@ public class ResourceProvider {
         return context.getString(stringId);
     }
 
-    public int getColor(int colorId) {
-        return ContextCompat.getColor(context, colorId);
-    }
 }
