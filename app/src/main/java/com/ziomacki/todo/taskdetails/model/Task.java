@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.model;
+package com.ziomacki.todo.taskdetails.model;
 
 import com.google.gson.annotations.Expose;
 import io.realm.RealmObject;

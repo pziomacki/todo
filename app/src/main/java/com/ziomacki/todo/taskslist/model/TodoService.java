@@ -1,5 +1,6 @@
-package com.ziomacki.todo.task.model;
+package com.ziomacki.todo.taskslist.model;
 
+import com.ziomacki.todo.taskdetails.model.Task;
 import java.util.List;
 import javax.inject.Inject;
 import io.realm.RealmList;

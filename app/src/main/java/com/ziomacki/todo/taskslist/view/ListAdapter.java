@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.view;
+package com.ziomacki.todo.taskslist.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.ziomacki.todo.R;
 import com.ziomacki.todo.component.ResourceProvider;
-import com.ziomacki.todo.task.model.Task;
+import com.ziomacki.todo.taskdetails.model.Task;
 import org.greenrobot.eventbus.EventBus;
 import java.util.Collections;
 import java.util.List;

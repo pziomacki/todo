@@ -1,11 +1,11 @@
-package com.ziomacki.todo.task.presenter;
+package com.ziomacki.todo.taskslist.presenter;
 
-import com.ziomacki.todo.task.eventbus.OnTaskOpenEvent;
-import com.ziomacki.todo.task.model.FetchList;
-import com.ziomacki.todo.task.model.Task;
-import com.ziomacki.todo.task.model.TaskContainer;
-import com.ziomacki.todo.task.model.TodoRepository;
-import com.ziomacki.todo.task.view.ListView;
+import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
+import com.ziomacki.todo.taskslist.model.FetchList;
+import com.ziomacki.todo.taskdetails.model.Task;
+import com.ziomacki.todo.taskslist.model.TaskContainer;
+import com.ziomacki.todo.taskslist.model.TaskListRepository;
+import com.ziomacki.todo.taskslist.view.ListView;
 import javax.inject.Inject;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -20,15 +20,15 @@ public class ListPresenter {
 
     private ListView listView;
     private FetchList fetchList;
-    private TodoRepository todoRepository;
+    private TaskListRepository taskListRepository;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     private RealmResults<Task> tasks;
     private boolean isLoading = false;
 
     @Inject
-    public ListPresenter(FetchList fetchList, TodoRepository todoRepository) {
+    public ListPresenter(FetchList fetchList, TaskListRepository taskListRepository) {
         this.fetchList = fetchList;
-        this.todoRepository = todoRepository;
+        this.taskListRepository = taskListRepository;
     }
 
     public void attachView(ListView listView) {
@@ -37,7 +37,7 @@ public class ListPresenter {
     }
 
     private void loadTasks() {
-        Subscription subscription = todoRepository.getTasks(false).subscribe(new Action1<RealmResults<Task>>() {
+        Subscription subscription = taskListRepository.getTasks(false).subscribe(new Action1<RealmResults<Task>>() {
             @Override
             public void call(RealmResults<Task> tasks) {
                 setTasks(tasks);

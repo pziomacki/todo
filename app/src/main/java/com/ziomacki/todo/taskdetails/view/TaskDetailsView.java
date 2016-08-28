@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.view;
+package com.ziomacki.todo.taskdetails.view;
 
 public interface TaskDetailsView {
     void setIsCompleted(boolean isCompleted);

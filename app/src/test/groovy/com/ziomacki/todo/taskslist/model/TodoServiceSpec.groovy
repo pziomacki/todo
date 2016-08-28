@@ -1,5 +1,6 @@
-package com.ziomacki.todo.task.model
+package com.ziomacki.todo.taskslist.model
 
+import com.ziomacki.todo.taskdetails.model.Task
 import okhttp3.Headers
 import retrofit2.Response
 import rx.observers.TestSubscriber

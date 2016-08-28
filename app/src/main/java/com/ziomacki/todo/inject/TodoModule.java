@@ -1,6 +1,6 @@
 package com.ziomacki.todo.inject;
 
-import com.ziomacki.todo.task.model.TodoApiService;
+import com.ziomacki.todo.taskslist.model.TodoApiService;
 import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;

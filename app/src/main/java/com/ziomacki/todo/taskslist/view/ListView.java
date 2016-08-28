@@ -1,6 +1,6 @@
-package com.ziomacki.todo.task.view;
+package com.ziomacki.todo.taskslist.view;
 
-import com.ziomacki.todo.task.model.Task;
+import com.ziomacki.todo.taskdetails.model.Task;
 import java.util.List;
 
 public interface ListView {

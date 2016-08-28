@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.model;
+package com.ziomacki.todo.taskslist.model;
 
 import javax.inject.Inject;
 import rx.Observable;
@@ -6,12 +6,12 @@ import rx.functions.Action1;
 
 public class FetchList {
 
-    private TodoRepository todoRepository;
+    private TaskListRepository taskListRepository;
     private TodoService todoService;
 
     @Inject
-    FetchList(TodoRepository todoRepository, TodoService todoService) {
-        this.todoRepository = todoRepository;
+    FetchList(TaskListRepository taskListRepository, TodoService todoService) {
+        this.taskListRepository = taskListRepository;
         this.todoService = todoService;
     }
 
@@ -19,7 +19,7 @@ public class FetchList {
         return todoService.fetchTasks(currentTaskListSize).doOnNext(new Action1<TaskContainer>() {
             @Override
             public void call(TaskContainer taskContainer) {
-                todoRepository.updateTaskContainer(taskContainer);
+                taskListRepository.updateTaskContainer(taskContainer);
             }
         });
     }

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.ziomacki.todo.task.view.ListActivity">
+      tools:context="com.ziomacki.todo.taskslist.view.ListActivity">
 
     <item
         android:id="@+id/action_filter"

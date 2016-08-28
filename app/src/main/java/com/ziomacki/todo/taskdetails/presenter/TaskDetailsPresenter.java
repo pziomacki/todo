@@ -1,8 +1,8 @@
-package com.ziomacki.todo.task.presenter;
+package com.ziomacki.todo.taskdetails.presenter;
 
-import com.ziomacki.todo.task.model.Task;
-import com.ziomacki.todo.task.model.TodoRepository;
-import com.ziomacki.todo.task.view.TaskDetailsView;
+import com.ziomacki.todo.taskdetails.model.Task;
+import com.ziomacki.todo.taskdetails.model.TaskRepository;
+import com.ziomacki.todo.taskdetails.view.TaskDetailsView;
 import javax.inject.Inject;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -15,7 +15,7 @@ public class TaskDetailsPresenter {
     private Task task;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     @Inject
-    TodoRepository todoRepository;
+    TaskRepository taskRepository;
 
     @Inject
     TaskDetailsPresenter() {}
@@ -30,7 +30,7 @@ public class TaskDetailsPresenter {
     }
 
     private void loadTask() {
-        Subscription subscription = todoRepository.getTask(taskId).subscribe(new Action1<Task>() {
+        Subscription subscription = taskRepository.getTask(taskId).subscribe(new Action1<Task>() {
             @Override
             public void call(Task task) {
                 onTaskLoaded(task);
@@ -53,7 +53,7 @@ public class TaskDetailsPresenter {
         task.completed = isComplete;
         task.title = taskText;
         task.modified = true;
-        Subscription subscription = todoRepository.saveTask(task).subscribe(new Action1<Task>() {
+        Subscription subscription = taskRepository.saveTask(task).subscribe(new Action1<Task>() {
             @Override
             public void call(Task task) {
                 taskDetailsView.close();

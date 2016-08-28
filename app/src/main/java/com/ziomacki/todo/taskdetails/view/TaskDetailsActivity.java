@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.view;
+package com.ziomacki.todo.taskdetails.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +13,7 @@ import android.widget.EditText;
 import com.ziomacki.todo.R;
 import com.ziomacki.todo.TodoApplication;
 import com.ziomacki.todo.inject.ApplicationComponent;
-import com.ziomacki.todo.inject.TodoModule;
-import com.ziomacki.todo.task.presenter.TaskDetailsPresenter;
+import com.ziomacki.todo.taskdetails.presenter.TaskDetailsPresenter;
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -72,7 +71,7 @@ public class TaskDetailsActivity extends AppCompatActivity implements TaskDetail
     private void injectDependencies() {
         ApplicationComponent applicationComponent =
                 ((TodoApplication) getApplication()).getApplicationComponent();
-        applicationComponent.todoComponent(new TodoModule()).inject(this);
+        applicationComponent.inject(this);
     }
 
     @Override

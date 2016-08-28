@@ -1,7 +1,6 @@
 package com.ziomacki.todo.inject;
 
-import com.ziomacki.todo.task.view.ListActivity;
-import com.ziomacki.todo.task.view.TaskDetailsActivity;
+import com.ziomacki.todo.taskslist.view.ListActivity;
 import dagger.Subcomponent;
 
 @ActivityScope
@@ -9,6 +8,4 @@ import dagger.Subcomponent;
 public interface TodoComponent {
 
     void inject(ListActivity listActivity);
-    void inject(TaskDetailsActivity taskDetailsActivity);
-
 }

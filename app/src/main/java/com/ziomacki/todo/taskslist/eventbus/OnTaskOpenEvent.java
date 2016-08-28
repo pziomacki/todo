@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.eventbus;
+package com.ziomacki.todo.taskslist.eventbus;
 
 public class OnTaskOpenEvent {
 

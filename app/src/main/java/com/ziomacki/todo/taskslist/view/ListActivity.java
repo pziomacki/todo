@@ -1,4 +1,4 @@
-package com.ziomacki.todo.task.view;
+package com.ziomacki.todo.taskslist.view;
 
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,9 +12,10 @@ import com.ziomacki.todo.R;
 import com.ziomacki.todo.TodoApplication;
 import com.ziomacki.todo.inject.ApplicationComponent;
 import com.ziomacki.todo.inject.TodoModule;
-import com.ziomacki.todo.task.eventbus.OnTaskOpenEvent;
-import com.ziomacki.todo.task.model.Task;
-import com.ziomacki.todo.task.presenter.ListPresenter;
+import com.ziomacki.todo.taskdetails.view.TaskDetailsActivity;
+import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
+import com.ziomacki.todo.taskdetails.model.Task;
+import com.ziomacki.todo.taskslist.presenter.ListPresenter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
