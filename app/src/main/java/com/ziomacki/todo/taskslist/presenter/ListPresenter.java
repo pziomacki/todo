@@ -1,21 +1,16 @@
 package com.ziomacki.todo.taskslist.presenter;
 
 import android.os.Bundle;
+import com.ziomacki.todo.component.RxTransformer;
 import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
 import com.ziomacki.todo.taskslist.model.BackupTasks;
 import com.ziomacki.todo.taskslist.model.FetchList;
-import com.ziomacki.todo.taskslist.model.TaskContainer;
 import com.ziomacki.todo.taskslist.model.TaskListRepository;
 import com.ziomacki.todo.taskslist.view.ListView;
-import java.util.List;
 import javax.inject.Inject;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class ListPresenter {
@@ -62,12 +57,7 @@ public class ListPresenter {
     }
 
     private void loadAllTasks() {
-        Subscription subscription = taskListRepository.getTasks(false).subscribe(new Action1<RealmResults<Task>>() {
-            @Override
-            public void call(RealmResults<Task> tasks) {
-                setAllTasks(tasks);
-            }
-        });
+        Subscription subscription = taskListRepository.getTasks(false).skip(1).subscribe(tasks -> setAllTasks(tasks));
         compositeSubscription.add(subscription);
     }
 
@@ -92,12 +82,8 @@ public class ListPresenter {
 
     private void loadModifiedOnlyTasks() {
         removeListenersAndClearSubscriptions();
-        Subscription subscription = taskListRepository.getTasks(true).subscribe(new Action1<RealmResults<Task>>() {
-            @Override
-            public void call(RealmResults<Task> tasks) {
-                setModifiedTasks(tasks);
-            }
-        });
+        Subscription subscription = taskListRepository.getTasks(true).skip(1)
+                .subscribe(tasks -> setModifiedTasks(tasks));
         compositeSubscription.add(subscription);
     }
 
@@ -124,12 +110,7 @@ public class ListPresenter {
     }
 
     private void addTasksListener() {
-        tasks.addChangeListener(new RealmChangeListener<RealmResults<Task>>() {
-            @Override
-            public void onChange(RealmResults<Task> element) {
-                updateListViewTasks();
-            }
-        });
+//        tasks.addChangeListener(t -> updateListViewTasks());
     }
 
     private void updateListViewTasks() {
@@ -140,21 +121,14 @@ public class ListPresenter {
         int listSize = tasks.size();
         listView.showLoadingMore();
         setLoading(true);
-        Subscription subscription = fetchList.fetchNextPartOfTasks(listSize).subscribeOn(Schedulers.io()).observeOn
-                (AndroidSchedulers.mainThread())
-                .subscribe(new Action1<TaskContainer>() {
-                    @Override
-                    public void call(TaskContainer taskContainer) {
-                        finishFetchingData();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        //TODO: handle specific errors
-                        listView.displayErrorMessage();
-                        finishFetchingData();
-                    }
-                });
+        Subscription subscription = fetchList.fetchNextPartOfTasks(listSize)
+                .compose(RxTransformer.applySchedulers())
+                .subscribe(
+                        container -> finishFetchingData(),
+                        throwable -> {
+                            listView.displayErrorMessage();
+                            finishFetchingData();
+                        });
         compositeSubscription.add(subscription);
     }
 
@@ -167,19 +141,11 @@ public class ListPresenter {
 
     public void backupTasks() {
         listView.showLoading();
-        Subscription subscription = backupTasks.backup().subscribeOn(Schedulers.io()).observeOn
-                (AndroidSchedulers.mainThread())
-                .subscribe(new Action1<List<Task>>() {
-                    @Override
-                    public void call(List<Task> taskList) {
-                        handleBackupSucces();
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        listView.hideLoading();
-                    }
-                });
+        Subscription subscription = backupTasks.backup()
+                .compose(RxTransformer.applySchedulers())
+                .subscribe(
+                        taskList -> handleBackupSucces(),
+                        throwable -> listView.hideLoading());
         compositeSubscription.add(subscription);
     }
 

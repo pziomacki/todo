@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import io.realm.RealmList;
 import retrofit2.Response;
 import rx.Observable;
-import rx.functions.Func1;
 
 public class TodoService {
     private static final String TOTAL_COUNT_HEADER_NAME = "X-Total-Count";
@@ -21,13 +20,7 @@ public class TodoService {
 
     public Observable<TaskContainer> fetchTasks(int start) {
         int limit = start + PAGE_SIZE;
-        return todoApiService.getTaskList(start, limit).map(new Func1<Response<List<Task>>, TaskContainer>() {
-            @Override
-            public TaskContainer call(Response<List<Task>> tasksResponse) {
-                TaskContainer taskContainer = readFetchTasksResponse(tasksResponse);
-                return taskContainer;
-            }
-        });
+        return todoApiService.getTaskList(start, limit).map(taskResponse -> readFetchTasksResponse(taskResponse));
     }
 
     private TaskContainer readFetchTasksResponse(Response<List<Task>> tasksResponse) {
@@ -42,12 +35,7 @@ public class TodoService {
     public Observable<List<Task>> backupTasks(final List<Task> taskList) {
         if (taskList.size() != 0) {
             Observable<Task> observable = mergePutTaskCalls(taskList);
-            return observable.flatMap(new Func1<Task, Observable<List<Task>>>() {
-                @Override
-                public Observable<List<Task>> call(Task task) {
-                    return Observable.just(taskList);
-                }
-            });
+            return observable.flatMap(task -> Observable.just(taskList));
         } else {
             return Observable.just(taskList);
         }
