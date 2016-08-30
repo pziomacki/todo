@@ -9,4 +9,6 @@ public interface ListView {
     void hideLoadingMore();
     void displayErrorMessage();
     void openDetails(int taskId);
+    void displayNoModifiedTasks();
+    void loadingMoreEnabled(boolean loadingMoreEnabled);
 }

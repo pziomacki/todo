@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 import com.ziomacki.todo.R;
 import com.ziomacki.todo.TodoApplication;
@@ -70,10 +73,25 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Override
     protected void onStart() {
         super.onStart();
-        registerListeners();
+        listPresenter.onStart();
+        eventBus.register(this);
     }
 
-    private void registerListeners() {
+    @Override
+    public void loadingMoreEnabled(boolean loadingMoreEnabled) {
+        if (loadingMoreEnabled) {
+            registerLoadMoreListener();
+        } else {
+            removeLoadMoreListener();
+        }
+    }
+
+    private void removeLoadMoreListener() {
+        listRecyclerView.removeOnScrollListener(loadMoreOnScrollListener);
+        compositeSubscription.clear();
+    }
+
+    private void registerLoadMoreListener() {
         listRecyclerView.addOnScrollListener(loadMoreOnScrollListener);
         Subscription subscription = loadMoreOnScrollListener.getLoadMoreObservable().subscribe(new Action1<Integer>() {
             @Override
@@ -82,7 +100,6 @@ public class ListActivity extends AppCompatActivity implements ListView{
             }
         });
         compositeSubscription.add(subscription);
-        eventBus.register(this);
     }
 
     @Override
@@ -98,8 +115,7 @@ public class ListActivity extends AppCompatActivity implements ListView{
     }
 
     private void unregisterListeners() {
-        listRecyclerView.removeOnScrollListener(loadMoreOnScrollListener);
-        compositeSubscription.clear();
+        removeLoadMoreListener();
         eventBus.unregister(this);
     }
 
@@ -111,6 +127,27 @@ public class ListActivity extends AppCompatActivity implements ListView{
         listRecyclerView.setLayoutManager(linearLayoutManager);
         listRecyclerView.setAdapter(listAdapter);
         listRecyclerView.addItemDecoration(listDivider);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_filter:
+                listPresenter.filterList();
+                return true;
+            case R.id.action_backup:
+                //TODO: implement
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -145,5 +182,10 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Override
     public void displayErrorMessage() {
         displaySnackbar(getString(R.string.error_message));
+    }
+
+    @Override
+    public void displayNoModifiedTasks() {
+        displaySnackbar(getString(R.string.list_menu_no_modified_tasks));
     }
 }
