@@ -1,6 +1,7 @@
 package com.ziomacki.todo.taskslist.presenter;
 
 import android.os.Bundle;
+import com.ziomacki.todo.component.RxTransformer;
 import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
 import com.ziomacki.todo.taskslist.model.BackupTasks;
@@ -10,8 +11,6 @@ import com.ziomacki.todo.taskslist.view.ListView;
 import javax.inject.Inject;
 import io.realm.RealmResults;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class ListPresenter {
@@ -58,7 +57,7 @@ public class ListPresenter {
     }
 
     private void loadAllTasks() {
-        Subscription subscription = taskListRepository.getTasks(false).subscribe(tasks -> setAllTasks(tasks));
+        Subscription subscription = taskListRepository.getTasks(false).skip(1).subscribe(tasks -> setAllTasks(tasks));
         compositeSubscription.add(subscription);
     }
 
@@ -83,7 +82,8 @@ public class ListPresenter {
 
     private void loadModifiedOnlyTasks() {
         removeListenersAndClearSubscriptions();
-        Subscription subscription = taskListRepository.getTasks(true).subscribe(tasks -> setModifiedTasks(tasks));
+        Subscription subscription = taskListRepository.getTasks(true).skip(1)
+                .subscribe(tasks -> setModifiedTasks(tasks));
         compositeSubscription.add(subscription);
     }
 
@@ -110,7 +110,7 @@ public class ListPresenter {
     }
 
     private void addTasksListener() {
-        tasks.addChangeListener(t -> updateListViewTasks());
+//        tasks.addChangeListener(t -> updateListViewTasks());
     }
 
     private void updateListViewTasks() {
@@ -121,8 +121,8 @@ public class ListPresenter {
         int listSize = tasks.size();
         listView.showLoadingMore();
         setLoading(true);
-        Subscription subscription = fetchList.fetchNextPartOfTasks(listSize).subscribeOn(Schedulers.io()).observeOn
-                (AndroidSchedulers.mainThread())
+        Subscription subscription = fetchList.fetchNextPartOfTasks(listSize)
+                .compose(RxTransformer.applySchedulers())
                 .subscribe(
                         container -> finishFetchingData(),
                         throwable -> {
@@ -141,8 +141,8 @@ public class ListPresenter {
 
     public void backupTasks() {
         listView.showLoading();
-        Subscription subscription = backupTasks.backup().subscribeOn(Schedulers.io()).observeOn
-                (AndroidSchedulers.mainThread())
+        Subscription subscription = backupTasks.backup()
+                .compose(RxTransformer.applySchedulers())
                 .subscribe(
                         taskList -> handleBackupSucces(),
                         throwable -> listView.hideLoading());

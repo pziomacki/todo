@@ -50,19 +50,13 @@ public class TaskListRepository {
 
     public Observable<RealmResults<Task>> getTasks(final boolean onlyModified) {
         final Realm realm = realmWrapper.getRealmInstance();
-        return Observable.create(new Observable.OnSubscribe<RealmResults<Task>>() {
-            @Override
-            public void call(Subscriber<? super RealmResults<Task>> subscriber) {
-                RealmResults<Task> results;
-                RealmQuery<Task> query = realm.where(Task.class);
-                if (onlyModified) {
-                    results = query.equalTo(Task.KEY_MODIFIED, true).findAll();
-                } else {
-                    results = query.findAll();
-                }
-                subscriber.onNext(results);
-            }
-        }).doOnUnsubscribe(() -> realm.close());
+        RealmQuery<Task> query = realm.where(Task.class);
+        if (onlyModified) {
+            query = query.equalTo(Task.KEY_MODIFIED, true);
+        }
+        Observable<RealmResults<Task>> taskObservable = query.findAllAsync().asObservable()
+                .doOnUnsubscribe(() -> realm.close());
+        return taskObservable;
     }
 
     public Observable<List<Task>> getUnmanagedModifiedTasks() {
