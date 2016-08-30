@@ -5,7 +5,7 @@
     <string name="item_completed">Task completed: %s</string>
     <string name="list_menu_upload_title">Upload</string>
     <string name="list_menu_filter_title">Filter modififed</string>
-    <string name="list_menu_no_modified_tasks">None of tasks was modified</string>
+    <string name="list_menu_no_modified_tasks">No modified tasks</string>
     
     <!-- Task details -->
     <string name="details_complete">Complete</string>

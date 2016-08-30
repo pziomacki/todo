@@ -1,5 +1,6 @@
 package com.ziomacki.todo.taskslist.presenter;
 
+import android.os.Bundle;
 import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
 import com.ziomacki.todo.taskslist.model.FetchList;
@@ -16,6 +17,9 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 public class ListPresenter {
+
+    private static final String KEY_MODIFIED_ONLY = "KEY_MODIFIED_ONLY";
+    private static final String KEY_LOADING_MORE_ENABLED = "KEY_LOADING_MORE_ENABLED";
 
     private ListView listView;
     private FetchList fetchList;
@@ -34,7 +38,19 @@ public class ListPresenter {
 
     public void attachView(ListView listView) {
         this.listView = listView;
-        loadAllTasks();
+    }
+
+    public void saveInstance(Bundle outState) {
+        outState.putBoolean(KEY_MODIFIED_ONLY, showModifiedOnly);
+        outState.putBoolean(KEY_LOADING_MORE_ENABLED, loadingMoreEnabled);
+    }
+
+    public void init(Bundle saveInstanceState) {
+        if (saveInstanceState != null) {
+            showModifiedOnly = saveInstanceState.getBoolean(KEY_MODIFIED_ONLY, false);
+            loadingMoreEnabled = saveInstanceState.getBoolean(KEY_LOADING_MORE_ENABLED, true);
+        }
+        loadTasks();
     }
 
     public void onStart() {
@@ -151,7 +167,9 @@ public class ListPresenter {
     }
 
     private void removeListenersAndClearSubscriptions() {
-        tasks.removeChangeListeners();
+        if (tasks != null) {
+            tasks.removeChangeListeners();
+        }
         compositeSubscription.clear();
     }
 

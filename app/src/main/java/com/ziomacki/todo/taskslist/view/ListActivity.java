@@ -1,9 +1,9 @@
 package com.ziomacki.todo.taskslist.view;
 
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,9 +15,9 @@ import com.ziomacki.todo.R;
 import com.ziomacki.todo.TodoApplication;
 import com.ziomacki.todo.inject.ApplicationComponent;
 import com.ziomacki.todo.inject.TodoModule;
+import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskdetails.view.TaskDetailsActivity;
 import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
-import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskslist.presenter.ListPresenter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,11 +57,18 @@ public class ListActivity extends AppCompatActivity implements ListView{
         injectDependencies();
         initViews();
         listPresenter.attachView(this);
+        listPresenter.init(savedInstanceState);
     }
 
     private void initViews() {
         setupRecyclerView();
         setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        listPresenter.saveInstance(outState);
     }
 
     private void injectDependencies() {
