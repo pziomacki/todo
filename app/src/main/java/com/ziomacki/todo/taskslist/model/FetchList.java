@@ -2,7 +2,6 @@ package com.ziomacki.todo.taskslist.model;
 
 import javax.inject.Inject;
 import rx.Observable;
-import rx.functions.Action1;
 
 public class FetchList {
 
@@ -16,11 +15,7 @@ public class FetchList {
     }
 
     public Observable<TaskContainer> fetchNextPartOfTasks(int currentTaskListSize) {
-        return todoService.fetchTasks(currentTaskListSize).doOnNext(new Action1<TaskContainer>() {
-            @Override
-            public void call(TaskContainer taskContainer) {
-                taskListRepository.updateTaskContainer(taskContainer);
-            }
-        });
+        return todoService.fetchTasks(currentTaskListSize)
+                .doOnNext(taskContainer -> taskListRepository.updateTaskContainer(taskContainer));
     }
 }

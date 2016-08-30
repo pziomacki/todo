@@ -11,7 +11,6 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action0;
 
 public class TaskListRepository {
 
@@ -63,12 +62,7 @@ public class TaskListRepository {
                 }
                 subscriber.onNext(results);
             }
-        }).doOnUnsubscribe(new Action0() {
-            @Override
-            public void call() {
-                realm.close();
-            }
-        });
+        }).doOnUnsubscribe(() -> realm.close());
     }
 
     public Observable<List<Task>> getUnmanagedModifiedTasks() {

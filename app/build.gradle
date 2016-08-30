@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 apply plugin: 'groovyx.grooid.groovy-android'
 apply plugin: 'realm-android'
+apply plugin: 'me.tatarka.retrolambda'
 
 apt {
     arguments {
@@ -20,12 +21,17 @@ android {
         versionCode 1
         versionName "1.0"
         buildConfigField 'String', 'todoApiUrl', '"http://jsonplaceholder.typicode.com"'
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -54,4 +60,8 @@ dependencies {
     testCompile 'org.robospock:robospock:0.8.0'
     testCompile 'cglib:cglib-nodep:2.2.2'
     testCompile 'org.objenesis:objenesis:2.2'
+}
+
+retrolambda {
+    jvmArgs '-noverify'
 }

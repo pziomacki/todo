@@ -5,7 +5,6 @@ import com.ziomacki.todo.taskdetails.model.TaskRepository;
 import com.ziomacki.todo.taskdetails.view.TaskDetailsView;
 import javax.inject.Inject;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
 public class TaskDetailsPresenter {
@@ -30,12 +29,7 @@ public class TaskDetailsPresenter {
     }
 
     private void loadTask() {
-        Subscription subscription = taskRepository.getTask(taskId).subscribe(new Action1<Task>() {
-            @Override
-            public void call(Task task) {
-                onTaskLoaded(task);
-            }
-        });
+        Subscription subscription = taskRepository.getTask(taskId).subscribe(task -> onTaskLoaded(task));
         compositeSubscription.add(subscription);
     }
 
@@ -53,12 +47,7 @@ public class TaskDetailsPresenter {
         task.completed = isComplete;
         task.title = taskText;
         task.modified = true;
-        Subscription subscription = taskRepository.saveTask(task).subscribe(new Action1<Task>() {
-            @Override
-            public void call(Task task) {
-                taskDetailsView.close();
-            }
-        });
+        Subscription subscription = taskRepository.saveTask(task).subscribe(task -> taskDetailsView.close());
         compositeSubscription.add(subscription);
     }
 }

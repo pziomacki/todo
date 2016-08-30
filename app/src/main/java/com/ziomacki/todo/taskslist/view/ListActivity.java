@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 
 public class ListActivity extends AppCompatActivity implements ListView{
@@ -101,12 +100,8 @@ public class ListActivity extends AppCompatActivity implements ListView{
 
     private void registerLoadMoreListener() {
         listRecyclerView.addOnScrollListener(loadMoreOnScrollListener);
-        Subscription subscription = loadMoreOnScrollListener.getLoadMoreObservable().subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                listPresenter.loadMore();
-            }
-        });
+        Subscription subscription = loadMoreOnScrollListener.getLoadMoreObservable()
+                .subscribe(i -> listPresenter.loadMore());
         compositeSubscription.add(subscription);
     }
 
