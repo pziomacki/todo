@@ -1,5 +1,6 @@
 package com.ziomacki.todo.taskslist.view;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,7 +28,13 @@ public class TaskViewHolder extends RecyclerView.ViewHolder{
     public void bind(Task task, EventBus eventBus, ResourceProvider resourceProvider) {
         setTitleView(task.title);
         setCompletedView(resourceProvider, task.completed);
+        setIsModified(task.modified);
         setOnClickListener(eventBus, task.id);
+    }
+
+    private void setIsModified(boolean modified) {
+        int backgroundColor = modified ? Color.GRAY : Color.WHITE;
+        mainContainerView.setBackgroundColor(backgroundColor);
     }
 
     private void setTitleView(String title) {
