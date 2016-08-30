@@ -150,7 +150,7 @@ public class ListActivity extends AppCompatActivity implements ListView{
                 listPresenter.filterList();
                 return true;
             case R.id.action_backup:
-                //TODO: implement
+                listPresenter.backupTasks();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -3,10 +3,12 @@ package com.ziomacki.todo.taskslist.presenter;
 import android.os.Bundle;
 import com.ziomacki.todo.taskdetails.model.Task;
 import com.ziomacki.todo.taskslist.eventbus.OnTaskOpenEvent;
+import com.ziomacki.todo.taskslist.model.BackupTasks;
 import com.ziomacki.todo.taskslist.model.FetchList;
 import com.ziomacki.todo.taskslist.model.TaskContainer;
 import com.ziomacki.todo.taskslist.model.TaskListRepository;
 import com.ziomacki.todo.taskslist.view.ListView;
+import java.util.List;
 import javax.inject.Inject;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -23,6 +25,7 @@ public class ListPresenter {
 
     private ListView listView;
     private FetchList fetchList;
+    private BackupTasks backupTasks;
     private TaskListRepository taskListRepository;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
     private RealmResults<Task> tasks;
@@ -31,9 +34,10 @@ public class ListPresenter {
     private boolean loadingMoreEnabled = true;
 
     @Inject
-    public ListPresenter(FetchList fetchList, TaskListRepository taskListRepository) {
+    public ListPresenter(FetchList fetchList, TaskListRepository taskListRepository, BackupTasks backupTasks) {
         this.fetchList = fetchList;
         this.taskListRepository = taskListRepository;
+        this.backupTasks = backupTasks;
     }
 
     public void attachView(ListView listView) {
@@ -148,6 +152,23 @@ public class ListPresenter {
                         //TODO: handle specific errors
                         listView.displayErrorMessage();
                         finishFetchingData();
+                    }
+                });
+        compositeSubscription.add(subscription);
+    }
+
+    public void backupTasks() {
+        Subscription subscription = backupTasks.backup().subscribeOn(Schedulers.io()).observeOn
+                (AndroidSchedulers.mainThread())
+                .subscribe(new Action1<List<Task>>() {
+                    @Override
+                    public void call(List<Task> taskList) {
+
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        throwable.printStackTrace();
                     }
                 });
         compositeSubscription.add(subscription);
