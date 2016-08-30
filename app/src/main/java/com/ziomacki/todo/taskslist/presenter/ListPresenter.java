@@ -8,13 +8,12 @@ import com.ziomacki.todo.taskslist.model.BackupTasks;
 import com.ziomacki.todo.taskslist.model.FetchList;
 import com.ziomacki.todo.taskslist.model.TaskListRepository;
 import com.ziomacki.todo.taskslist.view.ListView;
+import java.util.List;
 import javax.inject.Inject;
-import io.realm.RealmResults;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
 public class ListPresenter {
-
     private static final String KEY_MODIFIED_ONLY = "KEY_MODIFIED_ONLY";
     private static final String KEY_LOADING_MORE_ENABLED = "KEY_LOADING_MORE_ENABLED";
 
@@ -23,7 +22,7 @@ public class ListPresenter {
     private BackupTasks backupTasks;
     private TaskListRepository taskListRepository;
     private CompositeSubscription compositeSubscription = new CompositeSubscription();
-    private RealmResults<Task> tasks;
+    private List<Task> tasks;
     private boolean loading = false;
     private boolean showModifiedOnly = false;
     private boolean loadingMoreEnabled = true;
@@ -53,64 +52,55 @@ public class ListPresenter {
     }
 
     public void onStart() {
-        setLoadingMore();
-    }
-
-    private void loadAllTasks() {
-        Subscription subscription = taskListRepository.getTasks(false).skip(1).subscribe(tasks -> setAllTasks(tasks));
-        compositeSubscription.add(subscription);
-    }
-
-    public void filterList() {
-        showModifiedOnly = !showModifiedOnly;
-        loadingMoreEnabled = !loadingMoreEnabled;
-        setLoadingMore();
-        loadTasks();
-    }
-
-    private void setLoadingMore() {
-        listView.loadingMoreEnabled(loadingMoreEnabled);
+        setIsLoadingMore();
     }
 
     private void loadTasks() {
+        clearSubscriptions();
         if (showModifiedOnly) {
-            loadModifiedOnlyTasks();
+            compositeSubscription.add(getModifiedOnlyTasksSubscription());
         } else {
-            loadAllTasks();
+            compositeSubscription.add(getAllTaskSubscription());
         }
     }
 
-    private void loadModifiedOnlyTasks() {
-        removeListenersAndClearSubscriptions();
-        Subscription subscription = taskListRepository.getTasks(true).skip(1)
-                .subscribe(tasks -> setModifiedTasks(tasks));
-        compositeSubscription.add(subscription);
+    private Subscription getAllTaskSubscription() {
+        return taskListRepository.getTasks(false).skip(1).subscribe(tasks -> setAllTasks(tasks));
     }
 
-    private void setModifiedTasks(RealmResults<Task> tasks) {
+    private void setAllTasks(List<Task> tasks) {
         this.tasks = tasks;
         updateListViewTasks();
-        addTasksListener();
-        if (isTaskListEmpty()) {
-            listView.displayNoModifiedTasks();
-        }
-    }
-
-    private void setAllTasks(RealmResults<Task> tasks) {
-        this.tasks = tasks;
-        updateListViewTasks();
-        addTasksListener();
         if (isTaskListEmpty()) {
             fetchNextPage();
         }
     }
 
-    private boolean isTaskListEmpty() {
-        return tasks == null || tasks.size() == 0;
+    public void filterList() {
+        showModifiedOnly = !showModifiedOnly;
+        loadingMoreEnabled = !loadingMoreEnabled;
+        setIsLoadingMore();
+        loadTasks();
     }
 
-    private void addTasksListener() {
-//        tasks.addChangeListener(t -> updateListViewTasks());
+    private Subscription getModifiedOnlyTasksSubscription() {
+        return taskListRepository.getTasks(true).skip(1).subscribe(tasks -> setModifiedTasks(tasks));
+    }
+
+    private void setModifiedTasks(List<Task> tasks) {
+        this.tasks = tasks;
+        updateListViewTasks();
+        if (isTaskListEmpty()) {
+            listView.displayNoModifiedTasks();
+        }
+    }
+
+    private void setIsLoadingMore() {
+        listView.loadingMoreEnabled(loadingMoreEnabled);
+    }
+
+    private boolean isTaskListEmpty() {
+        return tasks == null || tasks.size() == 0;
     }
 
     private void updateListViewTasks() {
@@ -126,6 +116,7 @@ public class ListPresenter {
                 .subscribe(
                         container -> finishFetchingData(),
                         throwable -> {
+                            //TODO: handle specific network errors
                             listView.displayErrorMessage();
                             finishFetchingData();
                         });
@@ -145,7 +136,10 @@ public class ListPresenter {
                 .compose(RxTransformer.applySchedulers())
                 .subscribe(
                         taskList -> handleBackupSucces(),
-                        throwable -> listView.hideLoading());
+                        throwable -> {
+                            listView.displayErrorMessage();
+                            listView.hideLoading();
+                        });
         compositeSubscription.add(subscription);
     }
 
@@ -159,13 +153,10 @@ public class ListPresenter {
     }
 
     public void onDestroy() {
-        removeListenersAndClearSubscriptions();
+        clearSubscriptions();
     }
 
-    private void removeListenersAndClearSubscriptions() {
-        if (tasks != null) {
-            tasks.removeChangeListeners();
-        }
+    private void clearSubscriptions() {
         compositeSubscription.clear();
     }
 

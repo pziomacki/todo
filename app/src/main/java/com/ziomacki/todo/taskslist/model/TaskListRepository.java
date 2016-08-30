@@ -48,13 +48,14 @@ public class TaskListRepository {
         realm.close();
     }
 
-    public Observable<RealmResults<Task>> getTasks(final boolean onlyModified) {
+    public Observable<List<Task>> getTasks(final boolean onlyModified) {
         final Realm realm = realmWrapper.getRealmInstance();
         RealmQuery<Task> query = realm.where(Task.class);
         if (onlyModified) {
             query = query.equalTo(Task.KEY_MODIFIED, true);
         }
-        Observable<RealmResults<Task>> taskObservable = query.findAllAsync().asObservable()
+        Observable<List<Task>> taskObservable = query.findAllAsync().asObservable()
+                .map(tasks -> realm.copyFromRealm(tasks))
                 .doOnUnsubscribe(() -> realm.close());
         return taskObservable;
     }
