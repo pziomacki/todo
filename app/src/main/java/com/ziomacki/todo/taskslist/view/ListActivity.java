@@ -63,6 +63,7 @@ public class ListActivity extends AppCompatActivity implements ListView{
     private void initViews() {
         setupRecyclerView();
         setSupportActionBar(toolbar);
+        swipeRefreshLayout.setEnabled(false);
     }
 
     @Override
@@ -194,5 +195,15 @@ public class ListActivity extends AppCompatActivity implements ListView{
     @Override
     public void displayNoModifiedTasks() {
         displaySnackbar(getString(R.string.list_menu_no_modified_tasks));
+    }
+
+    @Override
+    public void showLoading() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void hideLoading() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 }

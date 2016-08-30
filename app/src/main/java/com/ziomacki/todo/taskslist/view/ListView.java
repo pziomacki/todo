@@ -11,4 +11,6 @@ public interface ListView {
     void openDetails(int taskId);
     void displayNoModifiedTasks();
     void loadingMoreEnabled(boolean loadingMoreEnabled);
+    void showLoading();
+    void hideLoading();
 }

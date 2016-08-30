@@ -49,7 +49,7 @@ public class TodoService {
                 }
             });
         } else {
-            return Observable.empty();
+            return Observable.just(taskList);
         }
     }
 

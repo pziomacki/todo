@@ -104,6 +104,7 @@ public class ListPresenter {
     private void setModifiedTasks(RealmResults<Task> tasks) {
         this.tasks = tasks;
         updateListViewTasks();
+        addTasksListener();
         if (isTaskListEmpty()) {
             listView.displayNoModifiedTasks();
         }
@@ -157,18 +158,26 @@ public class ListPresenter {
         compositeSubscription.add(subscription);
     }
 
+    private void handleBackupSucces() {
+        listView.hideLoading();
+        if (showModifiedOnly) {
+            filterList();
+        }
+    }
+
     public void backupTasks() {
+        listView.showLoading();
         Subscription subscription = backupTasks.backup().subscribeOn(Schedulers.io()).observeOn
                 (AndroidSchedulers.mainThread())
                 .subscribe(new Action1<List<Task>>() {
                     @Override
                     public void call(List<Task> taskList) {
-
+                        handleBackupSucces();
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        throwable.printStackTrace();
+                        listView.hideLoading();
                     }
                 });
         compositeSubscription.add(subscription);
