@@ -19,8 +19,7 @@ public class TodoService {
     }
 
     public Observable<TaskContainer> fetchTasks(int start) {
-        int limit = start + PAGE_SIZE;
-        return todoApiService.getTaskList(start, limit).map(taskResponse -> readFetchTasksResponse(taskResponse));
+        return todoApiService.getTaskList(start, PAGE_SIZE).map(taskResponse -> readFetchTasksResponse(taskResponse));
     }
 
     private TaskContainer readFetchTasksResponse(Response<List<Task>> tasksResponse) {
