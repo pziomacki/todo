@@ -9,7 +9,7 @@ import rx.subjects.Subject;
 
 public class LoadMoreOnScrollListener extends RecyclerView.OnScrollListener {
     private Subject<Integer, Integer> loadMoreSubject = PublishSubject.create();
-    private static int THRESHOLD = 10;
+    private static int THRESHOLD = 5;
 
     @Inject
     LoadMoreOnScrollListener() {}
@@ -27,5 +27,4 @@ public class LoadMoreOnScrollListener extends RecyclerView.OnScrollListener {
     public Observable<Integer> getLoadMoreObservable() {
         return loadMoreSubject;
     }
-
 }

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
@@ -21,25 +20,6 @@ public class TaskListRepository {
         this.realmWrapper = realmWrapper;
     }
 
-    public void updateTaskContainer(TaskContainer taskContainer) {
-        Realm realm = realmWrapper.getRealmInstance();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(taskContainer.taskRealmList);
-        realm.commitTransaction();
-        RealmResults<Task> realmResults = realm.where(Task.class).findAll();
-        RealmList<Task> realmTaskList = new RealmList<>();
-        realmTaskList.addAll(realmResults);
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(realmTaskList);
-        TaskContainer realmTaskContainer = realm.where(TaskContainer.class).findFirst();
-        if (realmTaskContainer != null) {
-            realmTaskContainer.totalCount = taskContainer.totalCount;
-            realmTaskContainer.taskRealmList = realmTaskList;
-        }
-        realm.commitTransaction();
-        realm.close();
-    }
-
     public void updateTaskList(List<Task> tasks) {
         Realm realm = realmWrapper.getRealmInstance();
         realm.beginTransaction();
@@ -48,7 +28,7 @@ public class TaskListRepository {
         realm.close();
     }
 
-    public Observable<List<Task>> getTasks(final boolean onlyModified) {
+    public Observable<List<Task>> getManagedTaskList(final boolean onlyModified) {
         final Realm realm = realmWrapper.getRealmInstance();
         RealmQuery<Task> query = realm.where(Task.class);
         if (onlyModified) {
@@ -60,7 +40,7 @@ public class TaskListRepository {
         return taskObservable;
     }
 
-    public Observable<List<Task>> getUnmanagedModifiedTasks() {
+    public Observable<List<Task>> getUnmanagedModifiedTaskList() {
         return Observable.create(new Observable.OnSubscribe<List<Task>>() {
             @Override
             public void call(Subscriber<? super List<Task>> subscriber) {

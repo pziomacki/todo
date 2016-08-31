@@ -10,7 +10,8 @@ public interface ListView {
     void displayErrorMessage();
     void openDetails(int taskId);
     void displayNoModifiedTasks();
-    void loadingMoreEnabled(boolean loadingMoreEnabled);
+    void loadingMoreEnabled();
+    void loadingMoreDisabled();
     void showLoading();
     void hideLoading();
 }

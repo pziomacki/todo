@@ -17,7 +17,7 @@ public class BackupTasks {
     }
 
     public Observable<List<Task>> backup() {
-        return taskListRepository.getUnmanagedModifiedTasks()
+        return taskListRepository.getUnmanagedModifiedTaskList()
                 .flatMap(tasks -> todoService.backupTasks(tasks))
                 .map(tasks -> {
                     for (int i = 0; i < tasks.size(); i++) {

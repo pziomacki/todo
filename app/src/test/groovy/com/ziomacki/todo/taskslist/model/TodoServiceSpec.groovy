@@ -22,8 +22,8 @@ class TodoServiceSpec extends Specification {
             TaskContainer result = testSubscriber.getOnNextEvents().get(0)
         then:
             result.totalCount == 1
-            result.taskRealmList.size() == 1
-            result.taskRealmList.get(0).title.equals("task")
+            result.taskList.size() == 1
+            result.taskList.get(0).title.equals("task")
     }
 
     def "parse response and return TaskContainer when server returns empty list"() {
@@ -39,7 +39,7 @@ class TodoServiceSpec extends Specification {
             TaskContainer result = testSubscriber.getOnNextEvents().get(0)
         then:
             result.totalCount == 0
-            result.taskRealmList.size() == 0
+            result.taskList.size() == 0
     }
 
     def List<Task> getTestTasks() {

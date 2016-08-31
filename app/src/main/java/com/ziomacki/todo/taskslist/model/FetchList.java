@@ -14,8 +14,9 @@ public class FetchList {
         this.todoService = todoService;
     }
 
-    public Observable<TaskContainer> fetchNextPartOfTasks(int currentTaskListSize) {
+    public Observable<Integer> fetchNextTasksAndReturnTotalCount(int currentTaskListSize) {
         return todoService.fetchTasks(currentTaskListSize)
-                .doOnNext(taskContainer -> taskListRepository.updateTaskContainer(taskContainer));
+                .doOnNext(taskContainer -> taskListRepository.updateTaskList(taskContainer.taskList))
+                .map(taskContainer -> taskContainer.totalCount);
     }
 }

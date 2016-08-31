@@ -16,7 +16,7 @@ class BackupTasksSpec extends Specification {
             TodoService todoServiceStub = Stub(TodoService)
             todoServiceStub.backupTasks(tasks) >> Observable.just(tasks)
             TaskListRepository taskListRepositoryStub = Stub(TaskListRepository)
-            taskListRepositoryStub.getUnmanagedModifiedTasks() >> Observable.just(tasks)
+            taskListRepositoryStub.getUnmanagedModifiedTaskList() >> Observable.just(tasks)
             BackupTasks sut = new BackupTasks(todoServiceStub, taskListRepositoryStub)
             TestSubscriber testSubscriber = new TestSubscriber()
         when:
@@ -32,7 +32,7 @@ class BackupTasksSpec extends Specification {
             TodoService todoServiceStub = Stub(TodoService)
             todoServiceStub.backupTasks(tasks) >> Observable.error(new IllegalArgumentException(""))
             TaskListRepository taskListRepositoryStub = Mock(TaskListRepository)
-            taskListRepositoryStub.getUnmanagedModifiedTasks() >> Observable.just(tasks)
+            taskListRepositoryStub.getUnmanagedModifiedTaskList() >> Observable.just(tasks)
             BackupTasks sut = new BackupTasks(todoServiceStub, taskListRepositoryStub)
             TestSubscriber testSubscriber = new TestSubscriber()
         when:

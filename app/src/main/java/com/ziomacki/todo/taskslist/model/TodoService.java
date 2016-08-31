@@ -1,15 +1,15 @@
 package com.ziomacki.todo.taskslist.model;
 
 import com.ziomacki.todo.taskdetails.model.Task;
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import io.realm.RealmList;
 import retrofit2.Response;
 import rx.Observable;
 
 public class TodoService {
     private static final String TOTAL_COUNT_HEADER_NAME = "X-Total-Count";
-    private static final int PAGE_SIZE = 30;
+    private static final int PAGE_SIZE = 20;
 
     private TodoApiService todoApiService;
 
@@ -25,8 +25,8 @@ public class TodoService {
 
     private TaskContainer readFetchTasksResponse(Response<List<Task>> tasksResponse) {
         TaskContainer taskContainer = new TaskContainer();
-        taskContainer.taskRealmList = new RealmList<>();
-        taskContainer.taskRealmList.addAll(tasksResponse.body());
+        taskContainer.taskList = new ArrayList<>();
+        taskContainer.taskList.addAll(tasksResponse.body());
         int totalCount = Integer.parseInt(tasksResponse.headers().get(TOTAL_COUNT_HEADER_NAME));
         taskContainer.totalCount = totalCount;
         return taskContainer;

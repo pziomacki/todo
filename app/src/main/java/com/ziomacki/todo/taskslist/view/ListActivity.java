@@ -85,12 +85,13 @@ public class ListActivity extends AppCompatActivity implements ListView{
     }
 
     @Override
-    public void loadingMoreEnabled(boolean loadingMoreEnabled) {
-        if (loadingMoreEnabled) {
-            registerLoadMoreListener();
-        } else {
-            removeLoadMoreListener();
-        }
+    public void loadingMoreEnabled() {
+        registerLoadMoreListener();
+    }
+
+    @Override
+    public void loadingMoreDisabled() {
+        removeLoadMoreListener();
     }
 
     private void removeLoadMoreListener() {
